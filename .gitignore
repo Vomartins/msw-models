@@ -1,0 +1,9 @@
+# OPM Flow simulation outputs
+*.INIT
+*.UNRST
+*.UNSMRY
+*.SMSPEC
+*.EGRID
+*.PRT
+*.DBG
+*.ESMRY
