@@ -1,0 +1,4 @@
+*.GRDECL filter=lfs diff=lfs merge=lfs -text
+*.INIT filter=lfs diff=lfs merge=lfs -text
+*.UNRST filter=lfs diff=lfs merge=lfs -text
+*.EGRID filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,376 @@
+-- This reservoir simulation deck is made available under the Open Database
+-- License: http://opendatacommons.org/licenses/odbl/1.0/. Any rights in
+-- individual contents of the database are licensed under the Database Contents
+-- License: http://opendatacommons.org/licenses/dbcl/1.0/
+
+-- Copyright (C) 2025 Equinor
+
+-- Multi-Segment Well Test Case
+
+-- =================================================================================================================================
+-- 
+-- RUNSPEC SECTION 
+-- 
+-- =================================================================================================================================
+RUNSPEC
+--
+--       DEFINE THE TITLE FOR THE RUN
+--
+TITLE
+Multi-Segment Well Test Case
+--
+--       DEFINE THE START DATE FOR THE RUN
+--
+START
+  01 'JAN' 2000 /
+--
+--       PHASES PRESENT IN THE RUN
+--
+WATER
+OIL
+GAS
+DISGAS
+
+-- ---------------------------------------------------------------------------------------------------------------------------------
+-- GRID AND EQUILBRATION DIMENSIONS AND OPTIONS                                             
+-- ---------------------------------------------------------------------------------------------------------------------------------
+--                                                                              
+--       MAX     MAX     MAX                                                    
+--       NDIVIX  NDIVIY  NDIVIZ                                                 
+DIMENS                                                                          
+         15      500     134                                                   / 
+--                                                                              
+--       MAX     MAX     RSVD    TVDP    TVDP                                   
+--       EQLNUM  DEPTH   NODES   TABLE   NODES                                  
+EQLDIMS                                                                         
+         1       500     20      1       1                                     /
+--                                                                              
+--       MAX     TOTAL   INDEP   FLUX    TRACK  CBM    OPERN  WORK  WORK  POLY
+--       FIPNUM  REGNS   REGNS   REGNS   REGNS  REGNS  REGNS  REAL  INTG  REGNS 
+REGDIMS                                                                         
+         1*      1*      1*      1*      1*     1*     1*                      /
+--
+--       NEG      MAX     MAX                                                    
+--       MULTS    MULTNUM PINCHNUM                                               
+GRIDOPTS                                                                        
+         YES      1*      1*                                                   /
+
+-- ---------------------------------------------------------------------------------------------------------------------------------
+-- ROCK AND SATURATION TABLES DIMENSIONS AND OPTIONS                                                
+-- ---------------------------------------------------------------------------------------------------------------------------------
+--
+--       MAX     MAX     MAX     MAX     MAX     MAX    MAX    MAX    EOS                      
+--       NTSFUN  NTPVT   NSSFUN  NPPVT   NTFIP   NRPVT  NRVPVT NTENDP ...    NTROCC            
+TABDIMS                                                                                       
+         9       1*      101     30      1*      1*     1*     1*     4*     3 /
+--
+--       DIRC    REVERSE MAX     MAX              
+--       SCALE   SCALE   TABLES  NODES            
+ENDSCALE
+         NODIR   REVERS /
+
+-- ---------------------------------------------------------------------------------------------------------------------------------
+-- GROUP, WELL AND VFP TABLE DIMENSIONS                                                
+-- ---------------------------------------------------------------------------------------------------------------------------------
+--                                                                                
+--       WELL    WELL    GRUPS   GRUPS                                          
+--       MXWELS  MXCONS  MXGRPS  MXGRPW                                         
+WELLDIMS                                                                        
+         4       500     2       4                                             /                                                                                
+--                                                                                
+--       WELL    WELL    BRANCH  SEGMENT                                          
+--       MXWELS  MXSEGS  MXBRAN  MXLINKS                                         
+WSEGDIMS
+         4       500     10      /
+
+-- ---------------------------------------------------------------------------------------------------------------------------------
+-- INPUT AND OUTPUT OPTIONS                                                   
+-- ---------------------------------------------------------------------------------------------------------------------------------
+--
+--       METRIC SYSTEM OF UNITS FOR BOTH INPUT AND OUTPUT 
+--
+METRIC
+--
+--       SWITCH ON THE UNIFIED INPUT FILES OPTION
+--
+UNIFIN                                                                          
+--
+--       SWITCH ON THE UNIFIED OUTPUT FILES OPTION
+--
+UNIFOUT                                                                          
+
+-- =================================================================================================================================
+-- 
+-- GRID SECTION 
+-- 
+-- =================================================================================================================================
+GRID
+--
+--       WRITE INIT FILE
+--
+INIT
+--
+--       GRID FILE OUTPUT OPTIONS
+--       GRID     EGRID
+GRIDFILE
+         0        1       /
+--                                                                                
+--       SET PINCH-OUT PARAMETERS FOR CALCULATING PINCH-OUT PROPERTIES                                          
+--                                                                                
+PINCH
+--       THRES    GAP      EMPTY    TRANS    MULTZ                                         
+--       THICK    NO GAP   GAP      CALC     CALC                                    
+         0.01     GAP  /
+--
+-- GRID STRUCTURE
+--
+INCLUDE
+  'INCLUDE/GRID.GRDECL' /
+--
+-- ACTIVE CELLS
+--
+INCLUDE
+  'INCLUDE/ACTNUM.GRDECL' /  -- Fault block only
+--
+-- GRID PROPERTIES
+--
+INCLUDE
+  'INCLUDE/NTG.GRDECL' /
+INCLUDE
+  'INCLUDE/PORO.GRDECL' /
+INCLUDE
+  'INCLUDE/PERMX.GRDECL' /
+INCLUDE
+  'INCLUDE/PERMY.GRDECL' /
+INCLUDE
+  'INCLUDE/PERMZ.GRDECL' /
+
+-- =================================================================================================================================
+-- 
+-- EDIT SECTION 
+-- 
+-- =================================================================================================================================
+EDIT
+
+-- =================================================================================================================================
+-- 
+-- PROPS SECTION 
+-- 
+-- =================================================================================================================================
+PROPS
+--
+-- PVT DATA
+--
+INCLUDE
+  'INCLUDE/PVT3.INC' /
+--
+--       ROCKOPT1 ROCKOPT2 ROCKOPT2 ROCKOPT4
+--       PRS/STRE NO/STORE ARRAY
+--
+ROCKOPTS
+         1*       1*       'ROCKNUM' /
+--
+--       ROCK COMPRESSIBILITY
+--
+--       PREF     CF
+ROCK
+         158      6.70811e-05  /
+         170      1.00000e-05  /
+         190      9.11214e-05  /
+--
+-- SATURATION FUNCTIONS
+--
+INCLUDE
+  'INCLUDE/SATFNS.INC' /
+--
+-- END POINT SCALING
+--
+INCLUDE
+  'INCLUDE/SGCR.GRDECL' /
+INCLUDE
+  'INCLUDE/SGU.GRDECL' /
+INCLUDE
+  'INCLUDE/SOGCR.GRDECL' /
+INCLUDE
+  'INCLUDE/SOWCR.GRDECL' /
+INCLUDE
+  'INCLUDE/SWCR.GRDECL' /
+INCLUDE
+  'INCLUDE/SWL.GRDECL' /
+INCLUDE
+  'INCLUDE/KRGR.GRDECL' /
+INCLUDE
+  'INCLUDE/KRORG.GRDECL' /
+INCLUDE
+  'INCLUDE/KRORW.GRDECL' /
+INCLUDE
+  'INCLUDE/KRWR.GRDECL' /
+--
+--       ACTIVATE SATURATION END-POINT EXPORT TO THE INIT FILE
+--
+FILLEPS
+  
+-- =================================================================================================================================
+-- 
+-- REGIONS SECTION 
+-- 
+-- =================================================================================================================================
+REGIONS
+
+INCLUDE
+  'INCLUDE/SATNUM.GRDECL' /
+INCLUDE
+  'INCLUDE/ROCKNUM.GRDECL' /
+  
+-- =================================================================================================================================
+-- 
+-- SOLUTION SECTION 
+-- 
+-- =================================================================================================================================
+SOLUTION
+--
+--       DATUM   DATUM   OWC     PCOW   GOC    PCGO   RS   RV   N           
+--       DEPTH   PRESS   DEPTH   ----   DEPTH  ----   OPT  OPT  OPT         
+EQUIL                                                                        
+        1542.50  158.32  1568.50 0.0   1542.50 0.0    0    0    -2 /
+--
+--       DATUM
+--       DEPTH
+DATUM
+         1557.5  /
+--
+--       RESTART CONTROL                                                      
+--
+RPTRST
+ BASIC=3 FREQ=1 ALLPROPS RVSAT RSSAT PBPD  NORST=1 RFIP RPORV /
+
+-- =================================================================================================================================
+-- 
+-- SUMMARY SECTION 
+-- 
+-- =================================================================================================================================
+SUMMARY
+
+RPTONLY
+ALL
+PERFORMA
+
+-- =================================================================================================================================
+-- 
+-- SCHEDULE SECTION 
+-- 
+-- =================================================================================================================================
+SCHEDULE
+--
+--       RESTART CONTROL                                                      
+--
+RPTRST
+ BASIC=3 FREQ=3 NORST=1 /
+--
+--       WELLS DEFINITIONS
+--
+INCLUDE
+  'INCLUDE/WELL_A1HX20.INC' /
+INCLUDE
+  'INCLUDE/WELL_A2HX20.INC' /
+INCLUDE
+  'INCLUDE/WELL_A3HX20.INC' /
+--
+--       WELL PRODUCTION WELL CONTROLS                                                     
+--                                                                              
+-- WELL  OPEN/  CNTL   OIL    WAT    GAS   LIQ    RES    BHP   THP   VFP    VFP  
+-- NAME  SHUT   MODE   RATE   RATE   RATE  RATE   RATE   PRES  PRES  TABLE  ALFQ 
+WCONPROD                                                                    
+A1HX20   OPEN   ORAT   4000   1*     1*    1*     1*     100.0 1*    1*     1* /
+A2HX20   OPEN   ORAT   2500   1*     1*    1*     1*     100.0 1*    1*     1* /
+/                                                                               
+--
+--       WELL INJECTION CONTROLS                                                      
+--                                                                              
+-- WELL  FLUID  OPEN/  CNTL  SURF   RESV   BHP   THP   VFP               
+-- NAME  TYPE   SHUT   MODE  RATE   RATE   PRSES PRES  TABLE             
+WCONINJE                                                                        
+A3HX20   WAT    OPEN   RATE  8000   1*     200.   1*    1*                     /
+/                                                                            
+--
+--       DEFINE SCHEDULE SECTION REPORT OPTIONS                                                      
+--                                                                              
+RPTSCHED
+ WELLS=2 WELSPECS /
+--
+--       REPORTING DATES                                                      
+--
+DATES
+--1  'JAN'  2000 /
+--
+  1  'FEB'  2000 /
+  1  'MAR'  2000 /
+  1  'APR'  2000 /
+  1  'MAY'  2000 /
+  1  'JUN'  2000 /
+  1  'JUL'  2000 /
+  1  'AUG'  2000 /
+  1  'SEP'  2000 /
+  1  'OCT'  2000 /
+  1  'NOV'  2000 /
+  1  'DEC'  2000 /
+  1  'JAN'  2001 /
+--
+--   1  'FEB'  2001 /
+--   1  'MAR'  2001 /
+--   1  'APR'  2001 /
+--   1  'MAY'  2001 /
+--   1  'JUN'  2001 /
+--   1  'JUL'  2001 /
+--   1  'AUG'  2001 /
+--   1  'SEP'  2001 /
+--   1  'OCT'  2001 /
+--   1  'NOV'  2001 /
+--   1  'DEC'  2001 /
+--   1  'JAN'  2002 /
+-- --
+--   1  'FEB'  2002 /
+--   1  'MAR'  2002 /
+--   1  'APR'  2002 /
+--   1  'MAY'  2002 /
+--   1  'JUN'  2002 /
+--   1  'JUL'  2002 /
+--   1  'AUG'  2002 /
+--   1  'SEP'  2002 /
+--   1  'OCT'  2002 /
+--   1  'NOV'  2002 /
+--   1  'DEC'  2002 /
+--   1  'JAN'  2003 /
+-- --
+--   1  'FEB'  2003 /
+--   1  'MAR'  2003 /
+--   1  'APR'  2003 /
+--   1  'MAY'  2003 /
+--   1  'JUN'  2003 /
+--   1  'JUL'  2003 /
+--   1  'AUG'  2003 /
+--   1  'SEP'  2003 /
+--   1  'OCT'  2003 /
+--   1  'NOV'  2003 /
+--   1  'DEC'  2003 /
+--   1  'JAN'  2004 /
+-- --
+--   1  'FEB'  2004 /
+--   1  'MAR'  2004 /
+--   1  'APR'  2004 /
+--   1  'MAY'  2004 /
+--   1  'JUN'  2004 /
+--   1  'JUL'  2004 /
+--   1  'AUG'  2004 /
+--   1  'SEP'  2004 /
+--   1  'OCT'  2004 /
+--   1  'NOV'  2004 /
+--   1  'DEC'  2004 /
+--   1  'JAN'  2005 /
+--
+/
+END
+--                                                                              
+-- *********************************************************************************************************************************
+-- END OF FILE                                                                  
+-- *********************************************************************************************************************************
